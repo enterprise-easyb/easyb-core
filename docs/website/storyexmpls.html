@@ -21,7 +21,7 @@ pageTracker._trackPageview();
 <body>
 <!-- start header -->
 <div id="header">
-	<h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
+	<h1><a href="http://www.easyb.io"><span>easyb</span></a></h1>
 	<h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
 </div>
 <!-- end header -->
@@ -87,7 +87,7 @@ after "stop selenium" , {
 <p>easyb supports the notion of narratives, which attempt to set the stage of a story. For example, below is an example of using a narrative for a story describing money.</p>
 
 <pre><code>
-package org.easyb.bdd.money
+package io.easyb.bdd.money
 
 description "This story is about currency management"
 
@@ -145,7 +145,7 @@ scenario "another Non-Gold level customer with $100 or more" , {
 <p>easyb can easily verify that specific exceptions were generated as a result of behavior. Just use the <code>ensureThrows</code> clause, shown below.</p>
 
 <pre><code>
-import org.easyb.exception.VerificationException
+import io.easyb.exception.VerificationException
 
 scenario "ensureThrows should be less noisy", {
  given "some error condition", {

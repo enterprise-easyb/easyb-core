@@ -21,7 +21,7 @@ pageTracker._trackPageview();
 <body>
 <!-- start header -->
 <div id="header">
-	<h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
+	<h1><a href="http://www.easyb.io"><span>easyb</span></a></h1>
 	<h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
 </div>
 <!-- end header -->
@@ -47,9 +47,9 @@ pageTracker._trackPageview();
     <p>Below is an example of using a specification to verify a <code>Queue</code>.</p>
 
 <pre><code>
-package org.easyb.bdd.specification.queue
+package io.easyb.bdd.specification.queue
 
-import org.easyb.bdd.Queue
+import io.easyb.bdd.Queue
 
 description "This is how a Queue must work"
 
@@ -80,11 +80,11 @@ it "should dequeue items in same order enqueued", {
 
 
 
-<p>Below is an example of validating the <code>ZipCodeValidator</code> object using the specification format rather than a story format (which was done on easyb's <a href="http://www.easyb.org">homepage</a>).</p>
+<p>Below is an example of validating the <code>ZipCodeValidator</code> object using the specification format rather than a story format (which was done on easyb's <a href="http://www.easyb.io">homepage</a>).</p>
 <pre><code>
-package org.easyb.bdd.specification.zip
+package io.easyb.bdd.specification.zip
 
-import org.easyb.bdd.zip.ZipCodeValidator
+import io.easyb.bdd.zip.ZipCodeValidator
 
 before "initialize zipcodevalidator instance", {
  zipvalidate = new ZipCodeValidator();
@@ -107,7 +107,7 @@ it "should accept valid zip codes", {
 <p>A specification may also be tagged as "pending" -- thus providing an indication of status. A pending specification is one which doesn't have an implementing closure for behavior like so:
 	
 <pre><code>
-package org.easyb.bdd.specification
+package io.easyb.bdd.specification
 
 it "should show up as a pending specification"
 </code></pre>	
