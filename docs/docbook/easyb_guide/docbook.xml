@@ -8,7 +8,7 @@
     <pubdate>@build.date@</pubdate>
 
     <copyright>
-      <year>Copyright @build.year@ easyb.io</year>
+      <year>Copyright @build.year@ easyb.org</year>
     </copyright>
 
     <releaseinfo>@docbook.project.version@</releaseinfo>

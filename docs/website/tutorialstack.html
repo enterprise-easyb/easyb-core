@@ -21,7 +21,7 @@ pageTracker._trackPageview();
 <body>
 <!-- start header -->
 <div id="header">
-	<h1><a href="http://www.easyb.io"><span>easyb</span></a></h1>
+	<h1><a href="http://www.easyb.org"><span>easyb</span></a></h1>
 	<h2>&nbsp;&nbsp; -- BDD in java can't get any easier</h2>
 </div>
 <!-- end header -->
@@ -91,7 +91,7 @@ and "then the stack should still be empty", {
 <pre><code>
 1) Specification the stack should still be empty:
  groovy.lang.MissingMethodException: No signature of method: \
- io.easyb.bdd.stack.Stack.isEmpty() is applicable for \
+ org.easyb.bdd.stack.Stack.isEmpty() is applicable for \
    argument types: () values: {}
   at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:572)
   at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:450)
@@ -188,7 +188,7 @@ and "then the stack should be empty", {
 <pre><code>
 ....There was an error running the script
 java.lang.RuntimeException
- at io.easyb.bdd.stack.Stack.push(Stack.java:10)
+ at org.easyb.bdd.stack.Stack.push(Stack.java:10)
  at gjdk.org.bdd.story.stack.Stack_GroovyReflector.invoke(Unknown Source)
 </code></pre>
 
@@ -336,7 +336,7 @@ and "then the stack should be empty", {
 <pre><code>
 .........There was an error running the script
 groovy.lang.MissingMethodException: No signature of method: 
- io.easyb.bdd.stack.Stack.peek() is applicable for
+ org.easyb.bdd.stack.Stack.peek() is applicable for 
   argument types: () values: {}
  at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:572)
 </code></pre>

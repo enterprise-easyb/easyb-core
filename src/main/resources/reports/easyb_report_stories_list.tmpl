@@ -1,6 +1,6 @@
 <%
-  import io.easyb.util.BehaviorStepType
-  import io.easyb.report.HtmlReportHelper
+  import org.easyb.util.BehaviorStepType
+  import org.easyb.report.HtmlReportHelper
 %>
 <div id='StoriesList' style='display:none;'>
   <h2>Stories List</h2>
@@ -57,7 +57,7 @@
                 <td colspan='3' style='color:red; padding-left: 1cm;'>
                   <% def cause = result.cause()
                      if (cause != null) { %>
-                    <% if (cause instanceof io.easyb.exception.VerificationException) { %>
+                    <% if (cause instanceof org.easyb.exception.VerificationException) { %>
                   <b>${cause.source}</b><br/>
                     <%}%>
                   <strong>${cause.getClass().name}: ${cause.message}</strong>
@@ -87,7 +87,7 @@
                     <td colspan='3' style='color:red; padding-left: 1cm;'>
                     <% def cCause = cResult.cause()
                        if (cCause != null) { %>
-                      <% if (cCause instanceof io.easyb.exception.VerificationException) { %>
+                      <% if (cCause instanceof org.easyb.exception.VerificationException) { %>
                       <b>${cCause?.source}</b><br/>
                       <%}%>
                       <strong>${cCause.getClass().name}: ${cCause.message}</strong>
