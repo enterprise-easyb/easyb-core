@@ -1,0 +1,20 @@
+package io.easyb
+
+import io.easyb.listener.ExecutionListenerAdaptor
+import io.easyb.util.BehaviorStepType
+
+def stack
+def listener
+
+before "create behavior step stack", {
+  listener = new ExecutionListenerAdaptor()
+  stack = new BehaviorStepStack(listener)
+}
+
+it "should create step and push step onto stack", {
+    stack.startStep(BehaviorStepType.SCENARIO, 'description')
+    BehaviorStep lastStep = stack.lastStep()
+    lastStep.shouldNotBe null
+}
+
+it "should notify listener"

@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>easyb-maven-parent</artifactId>
-		<groupId>org.easyb</groupId>
-		<version>1.5</version>
+		<groupId>io.easyb</groupId>
+		<version>2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>easyb-core</artifactId>
-	<version>1.7-SNAPSHOT</version>
+	<version>2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>easyb-core</name>
-	<description>A behavior driven development framework for the Java platform</description>
+	<description>A behavior driven development framework for the Java platform build on a groovy DSL</description>
 	<mailingLists>
 		<mailingList>
 			<name>easyb users</name>
@@ -36,36 +36,36 @@
 	</mailingLists>
 	<scm>
 		<!-- this is the format documented in the 1.4 SCM plugin -->
-		<connection>scm:git:git@github.com:easyb/easyb-core</connection>
-		<developerConnection>scm:git:git@github.com:easyb/easyb-core</developerConnection>
-		<url>http://github.com/easyb/easyb-core</url>
+		<connection>scm:git:git@github.com:enterprise-easyb/easyb-core</connection>
+		<developerConnection>scm:git:git@github.com:enterprise-easyb/easyb-core</developerConnection>
+		<url>http://github.com/enterprise-easyb/easyb-core</url>
 	  <tag>HEAD</tag>
   </scm>
 	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/easyb/issues/</url>
+		<system>GitHub</system>
+		<url>https://github.com/enterprise-easyb/easyb-core/issues</url>
 	</issueManagement>
 	<dependencies>
 		<dependency>
-			<groupId>org.easyb</groupId>
+			<groupId>io.easyb</groupId>
 			<artifactId>easyb-composite-groovy</artifactId>
-			<version>[1.2,2)</version>
+			<version>2.0-SNAPSHOT</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>org.easyb</groupId>
+			<groupId>io.easyb</groupId>
 			<artifactId>easyb-ast</artifactId>
-			<version>[1.1,2)</version>
+			<version>2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
-			<version>1.2</version>
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.5</version>
+			<version>2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ant</groupId>
@@ -80,7 +80,7 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>1.4.0</version>
+				<version>3.3.0</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
@@ -96,22 +96,22 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Import-Package>*,groovy.text,org.apache.tools.ant;version="[1.6.5, 1.8.99)";resolution:=optional,org.apache.tools.ant.types;version="[1.6.5, 1.8.99)";resolution:=optional,org.apache.tools.ant.taskdefs;version="[1.6.5, 1.8.99)";resolution:=optional</Import-Package>
-						<Export-Package>org.easyb;version="${project.version}", 
-				        org.easyb.ant;version="${project.version}", 
-				        org.easyb.delegates;version="${project.version}", 
-				        org.easyb.domain;version="${project.version}", 
-				        org.easyb.exception;version="${project.version}", 
-				        org.easyb.listener;version="${project.version}", 
-				        org.easyb.plugin;version="${project.version}", 
-				        org.easyb.report;version="${project.version}", 
-				        org.easyb.result;version="${project.version}", 
-				        org.easyb.util;version="${project.version}"</Export-Package>
+						<Export-Package>io.easyb;version="${project.version}",
+				        io.easyb.ant;version="${project.version}",
+				        io.easyb.delegates;version="${project.version}",
+				        io.easyb.domain;version="${project.version}",
+				        io.easyb.exception;version="${project.version}",
+				        io.easyb.listener;version="${project.version}",
+				        io.easyb.plugin;version="${project.version}",
+				        io.easyb.report;version="${project.version}",
+				        io.easyb.result;version="${project.version}",
+				        io.easyb.util;version="${project.version}"</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>3.0.2</version>
 				<configuration>
 					<archive>
 						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -121,7 +121,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
+				<version>1.8</version>
 				<executions>
 					<execution>
 						<id>test-behaviors</id>
@@ -143,7 +143,7 @@
 								<echo message=" test classes ${project.build.directory}/test-classes" />
 								-->
 								<mkdir dir="${project.build.directory}/reports" />
-								<taskdef name="easyb" classname="org.easyb.ant.BehaviorRunnerTask">
+								<taskdef name="easyb" classname="io.easyb.ant.BehaviorRunnerTask">
 									<classpath>
 										<path refid="maven.runtime.classpath" />
 										<pathelement location="${project.build.directory}/classes" />
@@ -194,7 +194,7 @@
 						<configuration>
 							<tasks>
 
-								<taskdef name="easyb" classname="org.easyb.ant.BehaviorRunnerTask">
+								<taskdef name="easyb" classnaBehaviorRunnerTaskTask">
 									<classpath>
 										<path refid="maven.runtime.classpath" />
 										<pathelement location="${project.build.directory}/classes" />
@@ -241,7 +241,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<taskdef name="easyb" classname="org.easyb.ant.BehaviorRunnerTask">
+								<taskdef name="easyb" classname="io.easyb.ant.BehaviorRunnerTask">
 									<classpath>
 										<path refid="maven.runtime.classpath" />
 										<pathelement location="${project.build.directory}/classes" />
@@ -273,7 +273,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<taskdef name="easyb" classname="org.easyb.ant.BehaviorRunnerTask">
+								<taskdef name="easyb" classname="io.easyb.ant.BehaviorRunnerTask">
 									<classpath>
 										<path refid="maven.runtime.classpath" />
 										<pathelement location="${project.build.directory}/classes" />
@@ -305,7 +305,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<taskdef name="easyb" classname="org.easyb.ant.BehaviorRunnerTask">
+								<taskdef name="easyb" classname="io.easyb.ant.BehaviorRunnerTask">
 									<classpath>
 										<path refid="maven.runtime.classpath" />
 										<pathelement location="${project.build.directory}/classes" />

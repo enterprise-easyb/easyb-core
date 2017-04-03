@@ -33,7 +33,7 @@ Contact
 If you have questions or are having so much fun with easyb that
 you'd like to tell someone about it, you can find us lurking around these sites:
 
-  - http://www.easyb.org - official website
+  - http://www.easyb.io - official website
   - http://code.google.com/p/easyb - easyb project page at google code
   - http://groups.google.com/group/easyb-users - easyb users mailing list
   - http://twitter.com/easybdd
