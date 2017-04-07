@@ -10,6 +10,14 @@ String narrative = '''
         }
     '''
 
+String mixedCaseNarrative = '''
+        narrative 'good stuff', {
+            As a user
+            I want my system to do something cool
+            So that i can make some money
+        }
+    '''
+
 String trickySpec = '''
         as a user
         i want my system to do something cool
@@ -18,8 +26,16 @@ String trickySpec = '''
 
 NarrativePreProcessor preProcessor = new NarrativePreProcessor()
 
+NarrativePreProcessor preProcessorMixed = new NarrativePreProcessor()
+
 it "should replace occurences of 'as a' with 'as_a'", {
     ensure(preProcessor.process(narrative)) {
+        contains('as_a')
+    }
+}
+
+it "should replace occurences of 'As a' with 'as_a'", {
+    ensure(preProcessor.process(mixedCaseNarrative)) {
         contains('as_a')
     }
 }
@@ -37,6 +53,12 @@ it "should replace occurences of 'i want' with 'i_want'", {
     }
 }
 
+it "should replace occurences of 'I want' with 'i_want'", {
+    ensure(preProcessor.process(mixedCaseNarrative)) {
+        contains('i_want')
+    }
+}
+
 it "should not replace occurences of 'i want' which occur outside of a narrative block", {
     ensure(preProcessor.process(trickySpec)) {
         contains('i want')
@@ -45,6 +67,12 @@ it "should not replace occurences of 'i want' which occur outside of a narrative
 
 it "should replace occurences of 'so that' with 'so_that'", {
     ensure(preProcessor.process(narrative)) {
+        contains('so_that')
+    }
+}
+
+it "should replace occurences of 'So that' with 'so_that'", {
+    ensure(preProcessor.process(mixedCaseNarrative)) {
         contains('so_that')
     }
 }
