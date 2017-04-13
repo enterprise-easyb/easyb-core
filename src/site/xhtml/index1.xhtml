@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/TR/xhtml1" xml:lang="en" lang="en">
+<body>
+<h1>Take it easy with easyb
+</h1><p>
+easyb is a behavior driven development framework for the Java platform. By using a specification based Domain 
+Specific Language, easyb aims to enable executable, yet readable documentation.</p>
+
+<p>Curious? Check out this video, which demonstrates easyb's specifications and stories.
+You'll see what we mean by executable and readable documentation. </p>
+
+
+<object type="application/x-shockwave-flash" data="http://www.youtube.com/v/GIqA4c-RvFQ&amp;hl=en&amp;fs=1" width="854" height="480">
+    <param name="movie" value="http://www.youtube.com/v/GIqA4c-RvFQ&amp;hl=en&amp;fs=1" />
+</object>
+
+
+<h2>Behavior driven development</h2>
+
+<p>Behavior driven development (or BDD) isn't anything new or revolutionary-- it's just an evolutionary offshoot of test
+driven development, in which the word test is replaced by the word should. Semantics aside, a lot of people have found 
+that the concept of should is a much more natural development driver than the concept of testing. In fact, when you 
+think in terms of behavior (i.e. shoulds) you'll find that writing specifications is easier to do first, which is the 
+intent of test driven development in the first place.</p>
+
+<h2>Easy?</h2>
+<p>easyb specifications are written in Groovy and run via a Java runner that can be invoked via the command line, Maven 2,
+or Ant. What's more, easyb supports a few different styles of specifications ranging from RSpec's it to a story based 
+DSL with givens, whens, and thens.</p>
+
+<p>easyb is all about easy.</p>
+
+<h2>easyb in action</h2>
+
+<p>easyb enables you to verify behavior of normal Java objects, work-flows, etc (basically, anything you write in Java) in
+a more natural way-- for instance, imagine having a conversation with a customer who wants you to write something to 
+validate zip codes.</p>
+
+<pre><code>
+    "Could you please write something that lets my customers know when they've provided an invalid zip code?" 
+
+    "Sure! So, given an invalid zip code, this validation service should notify someone that the zip code is incorrect?" 
+
+    "Right on! Man, you are smart!"
+</code></pre>
+
+<p>Notice that nowhere in this conversation did anyone say test! Whether or not you write specifications first or
+afterwards is up to you; however, assuming that you've already written the zip code validator, you could construct a 
+story like so:</p>
+
+<pre><code class="language-gherkin">
+    Given that someone mistypes a zip code
+    And given the zip code validation service is up and running
+    When validate is invoked
+    Then the service should indicate the zip code is invalid
+</code></pre>
+<p>Using the text above, you can then construct an easyb story like so:</p>
+
+<pre><code class="language-groovy">
+      given "an invalid zip code", {
+        invalidzipcode = "221o1"
+      }
+
+      and "given the zipcodevalidator is initialized", {
+        zipvalidate = new ZipCodeValidator()
+      }
+
+      when "validate is invoked with the invalid zip code", {
+        value = zipvalidate.validate(invalidzipcode)
+      }
+
+      then "the validator instance should return false", {
+        value.shouldBe false
+      }
+</code></pre>
+
+<p>Is that easy or what? Notice the shouldBe call in the then phrase-- neat, huh?</p>
+
+<p>Requirements, ideas, code-- they're all evolutionary in ways; consequently, you can refactor the scenario above if you
+find it helpful. For instance, the same scenario can be written more tersely like so:</p>
+
+<pre><code class="language-groovy">
+     given "the zipcodevalidator is initialized", {
+       zipvalidate = new ZipCodeValidator()
+     }
+
+     then "the validator should return false with invalid zipcodes", {
+       zipvalidate.validate("22o1o").shouldBe false
+     }
+</code></pre>
+
+<p>The point being that easyb helps bridge the gap between stakeholders and development by using a language that everyone
+can understand.</p>
+
+<p>BDD in Java can't get any easier!</p>
+</body>
+</html>

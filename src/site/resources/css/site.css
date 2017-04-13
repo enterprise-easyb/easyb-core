@@ -1,0 +1,8 @@
+/**
+ * site.css
+ * overrides and additions for default maven site styling
+ */
+
+#banner {
+    background-color: #EFEFEF;
+}

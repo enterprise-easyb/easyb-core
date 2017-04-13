@@ -1,0 +1,42 @@
+== Maven
+
+There are two ways of executing your easyb behaviors in Maven:
+
+* maven-easyb-plugin
+* easyb-junit
+
+=== Using the maven-easyb-plugin
+
+You can also run your behaviors and stories via easyb's Maven plugin as well as generate HTML story reports.
+It's easy as fully explained on the maven-easyb-plugin site. The latest versions of the easyb Maven plugin are
+available at Maven central, so you shouldn't need to configure anything beyond the plugin in your POM:
+
+[source]
+----
+<dependency>
+    <groupId>io.easyb</groupId>
+    <artifactId>maven-easyb-plugin</artifactId>
+    <version>2.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+=== Using easyb-junit
+
+The easyb-junit dependency includes an easyb JUnit runner so that you can integrate your easyb behaviors with JUnit.
+This includes integration with the Surefire and Failsafe plugins used to execute the `test` and `verify` goals.
+
+The latest versions of the easyb-junit component are available at Maven central, so you should only need to include
+the dependency in your POM:
+
+[source]
+----
+<dependency>
+    <groupId>io.easyb</groupId>
+    <artifactId>easyb-junit</artifactId>
+    <version>2.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+See for more details about working with the easyb JUnit runner.

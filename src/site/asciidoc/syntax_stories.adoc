@@ -1,0 +1,44 @@
+= Syntax Stories
+
+.A Sample easyb story showing most syntax features
+[source,groovy]
+----
+description """
+This API provides access to the reference data contained within the system
+"""
+
+narrative "narrative title", {
+   As a "unauthenticated user"
+   I want "to create an account"
+   So that "I canbe a registered user"
+}
+
+scenario "scenario 1", {
+   given "given 1"
+   and "given 2"
+   when "I take some action"
+   and "some other condition is in place"
+   then "there should be result 1"
+   and "there should be result 2"
+   where "sample data"
+}
+
+----
+
+
+
+
+=== Support for ignoring scenarios
+ignore is a hip keyword now in stories and it can take as an argument a scenario name, a list of scenario names, and even a regular expression
+
+=== Fixtures
+
+Richard Vowles
+
+10/22/13
+
+Re: [easyb-users] Re: Ordering of stories or has given
+
+From memory, there is a before, and a before_each in a story.
+
+Also from memory - this is two years ago - specifications are not supported.

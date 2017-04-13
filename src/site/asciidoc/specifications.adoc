@@ -1,0 +1,77 @@
+
+= easyb specifications
+
+easyb supports a few different mechanisms for defining behaviors. You can (depending on what's more comfortable for you):
+
+    define RSpec style specifications using before and it
+    define stories via given, when, and then
+
+Each style has a few associated semantical rules that turn out to be quite logical.
+Basic specifications
+
+Just like with RSpec, easyb enables you to use the it style syntax to describe behavior-- this enables a more literate
+pattern of programming (i.e. "it should behave like this"). For example, if you have a queue object, then conceivably,
+the behavior of the dequeue method would be that it should return the last item enqueued.
+
+Accordingly, with easyb, capturing that behavior is as simple as writing:
+
+
+.A Simple Specification
+[source,groovy]
+----
+queue = new Queue()
+
+it "should dequeue gives item just enqueued", {
+    queue.enqueue(2)
+    queue.dequeue().shouldBe(2)
+}
+----
+
+Needless to say, with Groovy, you could also write the verification step in the above it as
+
+.A Simple Specification
+[source,groovy]
+----
+queue.dequeue().shouldBe 2
+
+(note, the parenthesizes are removed for clarity). What's more, you may decide that the behavior of the queue should be
+that if someone enqueues null, an exception should be thrown. Consequently, you could add this behavior:
+
+
+it "should throw an exception when null is enqueued", {
+ ensureThrows(RuntimeException){
+  queue.enqueue(null)
+ }
+}
+----
+You can add as many specifications as you'd like this way too-- you can also create fixture logic should you require it.
+
+=== Before with easyb
+
+Now you have two specifications, in which case, you may decide that you'd like the queue initialized for each behavior
+rather than once. easyb supports a before construct that when utilized, ensures that the logic within it is run before
+each it behavior.
+
+You could then rewrite the above specification like so:
+
+.A More Complete Specification
+[source,groovy]
+----
+before "initialize the queue for each spec", {
+ queue = new Queue()
+}
+
+it "should dequeue gives item just enqueued", {
+ queue.enqueue(2)
+ queue.dequeue().shouldBe(2)
+}
+
+it "should throw an exception when null is enqueued", {
+ ensureThrows(RuntimeException){
+  queue.enqueue(null)
+ }
+}
+----
+
+Is that easy or what? By the way, did you notice that in the first it clause, you could easily write an ensure clause
+like ensure(queue.dequeue() == 2)? Of course, using shouldBe is a lot cooler. And easier. Easy as you want it.
