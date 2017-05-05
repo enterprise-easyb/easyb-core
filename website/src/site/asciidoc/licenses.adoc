@@ -1,0 +1,52 @@
+= licenses
+:icons: font
+
+easyb is distributed under the MIT license, which basically means distribution, usage, modifying, etc is easy.
+
+.MIT License
+****
+Copyright 2008-2017
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+****
+
+== Web Site
+
+The web site is generated during the build process using the Maven site plugin. Asciidoctor is the primary markup format
+that is used for the content.
+
+In addition, the following open source components are used:
+
+=== Cookie Consent
+
+Cookie Consent (https://cookieconsent.insites.com/[https://cookieconsent.insites.com/]) is a free JavaScript plugin for alerting users about the use of cookies on your website.
+
+It is designed to help you comply with the hideous EU Cookie Law and not make you want to kill yourself in the process.
+So we made it fast, free, and relatively painless.
+
+License: MIT
+
+=== Prism
+
+Prism (http://prismjs.com[http://prismjs.com]) is a lightweight, extensible syntax highlighter, built with modern web standards in mind. It’s used in thousands
+of websites, including some of those you visit daily.
+
+License: MIT
+
+=== Font Awesome
+
+Font Awesome gives you scalable vector icons that can instantly be customized — size, color, drop shadow, and
+anything that can be done with the power of CSS.
+
+Font License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL[http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL]
+
+=== Asciidoctor
+
+Asciidoctor is a fast text processor and publishing toolchain for converting AsciiDoc content to HTML5, DocBook 5
+(or 4.5) and other formats.
+
+License: MIT

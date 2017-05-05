@@ -1,0 +1,38 @@
+= language reference
+:icons: font
+
+
+.Common Syntax
+|===
+|Syntax| Description| Descriptors
+
+|narrative(description, closure)
+|
+| as a, i want, so that, in order to
+
+
+|description(description)
+|
+|N/A
+|===
+
+
+NarrativeDelegate
+====
+as_a
+i_want
+so_that
+in_order_to
+
+In order to [benefit]
+As a [role]
+I want [feature]
+
+As a [role]
+I want [feature]
+So that [benefit]
+
+As a [role]
+In order to [benefit]
+I want [feature]
+====

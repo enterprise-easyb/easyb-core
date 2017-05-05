@@ -1,0 +1,143 @@
+= easyb JUnit Runner
+:icons: font
+:toc: preamble
+:toc-title: Table of Contents
+:toclevels: 2
+
+The easyb JUnit runner provides a way to run easyb behaviors through JUnit. As of easyb 2.0, the JUnit runner is
+more closely integrated into the core easyb project. Since JUnit is widely used testing framework, the easyb JUnit
+runner makes it easy to integrate your easyb behaviors into many other tools.
+
+== How It Works
+
+The easyb JUnit runner works by providing a bridge between the standard JUnit Tests and Suites and your easyb
+stories and specifications. 
+
+To use the easyb JUnit runner you just need to create a class that extends the io.easyb.junit.EasybSuite abstract class.
+
+See Table 1 for the methods you can override in your subclass to change the way your behaviors
+are located and run:
+
+.io.easyb.junit.EasybSuite methods
+|===
+|method |description
+
+|baseDir
+|the base directory the Easyb behaviors are in
+
+|generateReports
+|a boolean indicating whether or not easyb should generate html and text execution reports
+
+|reportsDir
+|the parent directory containing the report directories
+
+|searchDir
+|
+
+|description
+|a description for the suite
+
+|trackTime
+|whether or not to track execution time. See below.
+
+|===
+
+.Sample Junit Test Suite
+[source,java]
+----
+public class EasybTest extends EasybSuite { 
+    @Override 
+    protected File baseDir() { 
+        return new File("spec"); 
+    }
+
+    @Override 
+    protected String description() { 
+        return "My Project Behaviors"; 
+    } 
+}
+----
+
+Then you can run this test in your IDE, or using Ant, or whatever else and it should execute all the behaviors under
+the folder you specified (behaviors must have a file extension of 'specification' or 'story').
+
+== Time Tracking
+
+Because of the way easyb and JUnit work, the tests have to actually run before the JUnit execution actually begins.
+Which means that JUnit can't actually track the execution time of the behaviors. The EasybSuite can simulate this if
+you tell it to by overriding the trackTime() method. This will increase the runtime of the test, however. These times
+will not be totally accurate, but should give a decent idea of execution time. If you do not override this method,
+then all the execution times will be 0.
+
+Here's what it looks like with that method overriden: 
+
+[source,java]
+----
+public class EasybTest extends EasybSuite { 
+    @Override 
+    protected File baseDir() { 
+        return new File("spec"); 
+    }
+
+    @Override 
+    protected String description() { 
+        return "My Project Behaviors"; 
+    }
+
+    @Override 
+    protected boolean trackTime() { 
+        return true; 
+    } 
+}
+----
+
+== Integration with Maven Surefire and Failsafe
+
+The Maven Surefire and Failsafe plugins are the standard way of running unit and integration tests in Maven. By default,
+these plugins look for JUnit and/or TestNG tests. You can use the easyb JUnit runner to easily integrate easyb behaviors
+into the maven lifecycle with the standard Surefire and Failsafe behavior. For instance, -DskipTests and -DskipITs will
+work as expected.
+
+TIP: The easyb-maven-plugin can be used to attach easyb execution to any lifecycle phase but you don't get the expected
+Surefire and Failsafe behavior.
+
+=== Surefire Test Names
+
+Surefire is used to execute the unit tests as part of the test lifecyle. By default, the JUnit Surefire
+provider will execute tests matching the following patterns:
+
+[source]
+----
+**/*Test.java
+**/Test*.java
+**/*TestCase.java
+----
+
+The easiest way (that is, without needing to configure the Failsafe plugin) is to create a JUnit test case that extends
+io.easyb.junit.EasybSuite in src/test/java and named according to the above patterns. You can then use the properties
+of your test case class to define how easyb locates and executes your behaviors.
+
+See http://maven.apache.org/surefire-archives/surefire-2.19.1/maven-surefire-plugin/index.html[http://maven.apache.org/surefire-archives/surefire-2.19.1/maven-surefire-plugin/index.html]
+
+=== Failsafe Test Names
+
+Failsafe is used to execute the integration tests as part of the verify lifecyle. By default, the JUnit Failsafe
+provider will execute tests matching the following patterns:
+
+[source]
+----
+**/*IT.java
+**/IT*.java
+**/*ITCase.java
+----
+
+The easiest way (that is, without needing to configure the Failsafe plugin) is to create a JUnit test case that extends
+io.easyb.junit.EasybSuite in src/test/java and named according to the above patterns. You can then use the properties
+of your test case class to define how easyb locates and executes your behaviors.
+
+See http://maven.apache.org/surefire-archives/surefire-2.19.1/maven-failsafe-plugin/index.html[http://maven.apache.org/surefire-archives/surefire-2.19.1/maven-failsafe-plugin/index.html]
+
+–
+Reference: https://code.google.com/archive/p/easyb-junit/[https://code.google.com/archive/p/easyb-junit/]
+License: Apache 2.0
+Date added to this web site: April 5, 2017

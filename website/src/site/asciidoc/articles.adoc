@@ -1,0 +1,95 @@
+= articles
+:icons: font
+:toc:preamble
+
+IMPORTANT: Most of the articles and information about easyb that you can find on the Internet today are rather old. Fortunately,
+there haven't been a lot of breaking changes over the years so almost everything you do find is still relevant.
+
+== bdd
+
+writing features - gherkin language
+http://docs.behat.org/en/v2.5/guides/1.gherkin.html
+
+3 Scenarios To Consider in Gherkin's Given-When-Then Format for User Stories
+http://www.agiletrailblazers.com/blog/3-scenarios-to-consider-gerkin-given-when-then-format-for-user-stories
+
+https://railsadventures.wordpress.com/2013/09/25/11-steps-to-make-your-rspec-specs-awesome/
+
+How To Write Well-Formed User Stories
+https://content.pivotal.io/blog/how-to-write-well-formed-user-stories
+
+A Practical Approach to Unit Testing
+http://www.mikemcgarr.com/blog/practical-unit-testing.html
+
+== easyb
+
+Is easyb Easy?
+https://dzone.com/articles/is-easyb-easy
+
+Stories are easy, man
+https://continuousdeliveryexperience.com/blog/andrew_glover/2008/01/stories_are_easy_man
+
+The evolution of easy
+https://info.gradlesummit.com/blog/andrew_glover/2007/12/the_evolution_of_easy
+
+BDD with ease with Easyb
+http://www.wakaleo.com/blog/214-bdd-with-ease-with-easyb
+
+Behavior-driven development with easyb
+http://www.javaworld.com/article/2077900/scripting-jvm-languages/behavior-driven-development-with-easyb.html
+
+easyb BDD framework – isA(“simple Groovy DSL”)
+https://roshandawrani.wordpress.com/2010/10/27/easyb-bdd-framework-a-simple-groovy-dsl/
+
+Example-driven Testing With Easyb
+https://dzone.com/articles/example-driven-testing-easyb
+
+5 Minute EasyB BDD Tutorial
+https://alexecollins.com/5-minute-easyb-bdd-tutorial/
+
+
+easyb: Introducing Conversational Unit Tests for Java
+https://dzone.com/articles/easyb-introducing-conversation
+
+== integrations
+
+Tellerium
+http://www.mail-archive.com/tellurium-users@googlegroups.com/msg00356.html
+
+Serenity
+
+Thucydides
+https://thucydides-webtests.com/tag/easyb/
+
+geb
+
+Executable requirements: BDD with easyb and JDave
+https://www.slideshare.net/wakaleo/executable-requirements-bdd-with-easyb-and-jdave[https://www.slideshare.net/wakaleo/executable-requirements-bdd-with-easyb-and-jdave]
+
+Easy tests with Selenide and Easyb
+https://www.slideshare.net/yashaka/easy-tests-with-selenide-and-easyb-31929747[https://www.slideshare.net/yashaka/easy-tests-with-selenide-and-easyb-31929747]
+
+Relevancy Driven Development with Solr
+https://leanjavaengineering.wordpress.com/2011/10/24/solr-rdd/
+
+Testing Grails services with easyb
+https://therichwebexperience.com/blog/andrew_glover/2010/10/testing_grails_services_with_easyb
+
+== miscellaneous
+
+Testing related notes: Behaviour driven development with easyb
+http://www.javaexpress.pl/article/show/Testing_related_notes_Behaviourdriven_development_with_easyb
+
+https://www.scribd.com/document/48770917/BDD-Easyb
+
+
+== easyb community before 2.0
+
+easyb @ Google Code Archive
+https://code.google.com/archive/p/easyb/
+
+easyb Users email group
+https://groups.google.com/forum/#!forum/easyb-users
+
+Open Hub
+https://www.openhub.net/p/easyb

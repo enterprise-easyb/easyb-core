@@ -1,0 +1,25 @@
+= faq
+:icons: font
+
+== General
+
+[qanda]
+
+Is easyb a dead project?::
+   easyb saw active development from 2008 until 2011. Recently a dedicated and devoted group of easyb supporters have
+   resurrected the project.
+
+What is the easyb team currently working on?::
+   Right now the primary focus is on updatng the documentation and adding some features to make easyb even easier to
+   use in an enterprise environment.
+
+== Support
+
+[qanda]
+
+How do I get support?::
+   Support is currently provided in two ways: the easyb-users Google Group and on Stack Overflow. When using Stack
+   Overflow, be sure to use the `easyb` tag.
+
+Where do I report issues?::
+   The easyb project is hosted on GitHub.com and uses the GitHub issue tracking system.

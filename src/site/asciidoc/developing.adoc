@@ -1,5 +1,0 @@
-= Developing easyb
-
-
-== Groovy Categories
-

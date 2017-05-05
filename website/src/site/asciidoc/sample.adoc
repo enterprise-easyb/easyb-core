@@ -1,0 +1,181 @@
+= Sample Formatting
+:icons: font
+:toc: preamble
+:example-caption!:
+
+This is the preamble. It's in a bigger font.
+
+http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
+
+
+== General Formatting
+
+Level 1
+-------
+Text.
+
+Level 2
+~~~~~~~
+Text.
+
+Level 3
+^^^^^^^
+Text.
+
+Level 4
++++++++
+Text.
+
+== Questions and Answers a/k/a FAQs
+
+[qanda]
+What is Asciidoctor?::
+  An implementation of the AsciiDoc processor in Ruby.
+What is the answer to the Ultimate Question?:: 42
+
+== Call Outs
+
+IMPORTANT: Important.
+
+NOTE: This is a note
+
+TIP: This is a tip
+
+CAUTION: This is a caution
+
+WARNING: This is a warning
+
+== Video
+
+video::GIqA4c-RvFQ[youtube]
+
+== Source Code
+
+.Optional Title
+[source,perl]
+----
+# *Source* block
+# Use: highlight code listings
+# (require `source-highlight` or `pygmentize`)
+use DBI;
+my $dbh = DBI->connect('...',$u,$p)
+    or die "connect: $dbh->errstr";
+----
+
+
+.Groovy Example
+[source,groovy]
+----
+def threadedPrintStringBuffer( StringBuffer aStringBuffer, Boolean aStop = false ) {
+	// useful for real-time printing of process output
+	/*
+		Example use:
+			def pb      = new ProcessBuilder( 'cmd', '/c', 'dir' );
+			def process = pb.start();
+			def sb1     = new StringBuffer();
+			process.consumeProcessOutput( sb1, sb1 );
+			def stop = threadedPrintStringBuffer( sb1 );
+			process.waitFor();
+			stop = true;
+	*/
+	Thread.start {
+		int sbOldSize = 0;
+		int sbNewSize = 0;
+		def nap    = { itNapTime = 100 -> Thread.sleep(itNapTime); } ;
+		int sz, delta;
+		def somethingToDo = {
+			sz    = aStringBuffer.length();
+			delta = sz - sbOldSize;
+			(delta > 0); // return
+		} ;
+		def doWork = {
+			sbNewSize = sz;
+			System.out.print( aStringBuffer.substring( sbOldSize, sbNewSize-1 ) );
+			System.out.flush(); // very important !!!
+			sbOldSize = sbNewSize;
+		} ;
+
+		while(true) {
+			if ( somethingToDo() ) { doWork(); }
+			nap();
+			if ( aStop && !somethingToDo() ) { break; }
+		} // end while
+	} // end Thread
+	return aStop; // !!!
+}
+----
+
+
+== Sidebar with Callout
+
+[IMPORTANT]
+.Feeding the Werewolves
+====
+While werewolves are hardy community members, keep in mind the following dietary concerns:
+
+. They are allergic to cinnamon.
+. More than two glasses of orange juice in 24 hours makes them howl in harmony with alarms and sirens.
+. Celery makes them sad.
+====
+
+== Tables
+
+.table
+|===
+|Header 1 |Header 2 |Header 3
+
+|Column 1, row 1
+|Column 2, row 1
+|Column 3, row 1
+
+|Column 1, row 2
+|Column 2, row 2
+|Column 3, row 2
+
+|Column 1, row 3
+|Column 2, row 3
+|Column 3, row 3
+|===
+
+== Sidebar
+
+.AsciiDoc history
+****
+AsciiDoc was first released in Nov 2002 by Stuart Rackham.
+It was designed from the start to be a shorthand syntax
+for producing professional documents like DocBook and LaTeX.
+****
+
+== Diagrams
+
+=== ditaa
+
+.ditaa diagram
+[ditaa,asciidoctor-diagram-process]
+....
+                   +-------------+
+                   | Asciidoctor |-------+
+                   |   diagram   |       |
+                   +-------------+       | PNG out
+                       ^                 |
+                       | ditaa in        |
+                       |                 v
+ +--------+   +--------+----+    /---------------\
+ |        |---+ Asciidoctor +--->|               |
+ |  Text  |   +-------------+    |   Beautiful   |
+ |Document|   |   !magic!   |    |    Output     |
+ |     {d}|   |             |    |               |
+ +---+----+   +-------------+    \---------------/
+     :                                   ^
+     |          Lots of work             |
+     +-----------------------------------+
+....
+
+=== PlantUML
+
+
+.plantuml diagram
+[plantuml]
+....
+actor bob
+....

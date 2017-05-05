@@ -1,0 +1,152 @@
+= Java Command Line
+:icons: font
+
+easyb comes with a command line runner that takes the name of a particular behavior or story you wish to run.
+You can optionally pass in a few different flag options to output various report formats as well.
+
+[source]
+----
+c:>java io.easyb.BehaviorRunner my/path/to/MyStory.groovy
+----
+
+If no additional arguments are specified, you'll see a report printed to System.out that looks something like this:
+
+[source]
+----
+Running your story (Your.story)
+Scenarios run: 1, Failures: 0, Pending: 0, Time Elapsed: 0.454 sec
+
+1 behavior run with no failures
+----
+
+Want to run multiple behaviors or stories in a single run? Yep, easyb supports that too. Just pass multiple stories
+on the command line.
+
+[source]
+----
+c:>java io.easyb.BehaviorRunner my/path/to/MyStory.groovy my/path/to/MySecondStory.groovy
+----
+
+Note, the runner doesn't care if you run a specification or a story– they are run the same either way! Easy, eh? 
+
+Filtering Behaviors 
+
+You can run behavior tags by passing the -tags flag along with a single or comma-delimited list of tag names. easyb will
+only run behaviors matching the specified tags
+
+== Command Line Flags
+
+_Note_ The line break in the following examples is for formatting purposes only.
+
+easyb supports a few command line arguments:
+
+[source]
+----
+ -batchCount &lt;arg>         The total number of batches these tests are
+                           being split up into
+ -batchNumber &lt;arg>        The number of the current batch if these tests
+                           are being split up into
+ -e <arg>                  prints stacktrace information
+ -ef <arg>                 prints filtered stacktrace information
+ -f <arg>                  run behaviors listed in a file
+ -html <arg>               create an easyb report in html format
+ -junit <arg>              create an easyb report in JUnit-compatible xml
+                           format. Reports will be created in the
+                           specified directory.
+ -ne                       creates report without running any stories
+ -outfail <arg>            caputure failed behaviors in a file (for
+                           processing at a later point -- see the -f
+                           option)
+ -parallel                 run stories and specifications in parallel
+ -prettyprint <arg>        prints colored behaviors
+ -root <arg>               Reports are created in this package by default.
+                           This makes the JUnit reports easier to fit into
+                           other generated JUnit reports.
+ -tags <arg>               run behaviors with tag marker
+ -txtspecification <arg>   create a behavior report
+ -txtstory <arg>           create a story report
+ -xml <arg>                create an easyb report in xml format
+----
+
+== Specifying Execution Reports
+
+You can specify the type of execution report you want easyb to generate using the following arguments;
+
+* -html
+* -junit
+* -xml
+* -txtstory
+* -prettyprint
+
+=== HTML Reports
+
+To produce an HTML report, which lists the status and summaries of all stories and specifications executed during an
+easyb run, type:
+
+[source]
+----
+c:>java io.easyb.BehaviorRunner my/path/to/MyStory.groovy \
+-html my/path/report.html
+----
+
+The path to and name of the report is optional as easyb will attempt to create a default one if neither is provided.
+
+== Examples
+
+You can generate a story printout of an easyb story by passing in the -txtstory flag as follows:
+
+[source]
+----
+c:>java io.easyb.BehaviorRunner my/path/to/MyStory.groovy \
+-txtstory ./target/mystory.txt
+----
+
+XML reporting via the command line
+
+If you'd rather produce an XML report, just pass in the -xml flag and provide a path where the xml report should be
+written. For instance, using the same example from earlier, if you'd rather have an XML report, simply type:
+
+[source]
+----
+c:>java io.easyb.BehaviorRunner my/path/to/MyStory.groovy \
+                                -xml my/path/report.xml
+----
+
+Note, the line break in the above example is for formatting purposes only.
+Colored command line output
+
+You can also show the executed stories by the command line, just pass in the -prettyprint flag as follows:
+
+[source]
+----
+$ java io.easyb.BehaviorRunner my/path/to/MyTestStory.groovy -prettyprint
+----
+
+Produces the output:
+
+[source]
+----
+  1 scenario executed, but status is failure! Total failures: 1
+    Story: myTest
+
+      scenario show colored output
+        given a string
+        then it should be null
+        given a number
+        then it shouldn't be 0 [FAILURE: expected values to differ but both were 0]
+        given an array
+        then it should be pending [PENDING]
+----
+
+== Exception Reporting
+
+easyb offers the ability to see exception stack traces via two flags.
+
+For viewing exception traces, easyb offers two options:
+
+[source]
+----
+    -e for a full exception stack trace
+    -ef for exception stack trace filtering — filters an exception trace to remove a lot of the noise associated 
+                                               with a Groovy exception stack 
+----

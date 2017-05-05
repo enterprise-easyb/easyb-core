@@ -1,0 +1,204 @@
+= Introduction to Plugins
+:icons: font
+
+Writing plug-ins for easyb is simple and primarily involves implementing the EasybPlugin object (or extending an adapter
+object called BasePlugin) and declaring your plug-in using the service provider pattern defined in Sun's jar
+specification.
+
+== Overview
+
+To create a plug-in for easyb: 
+
+* Create a class which implements the org.disco.easyb.plugin.EasybPlugin interface (or extend BasePlugin, which acts
+as an easy adapter)
+* Create a file name org.disco.easyb.plugin.EasybPlugin and ensure that it is packaged in the META-INF/services
+directory of a jar created by your build process * This file should contain a single line which is the fully qualified
+name of your plug-in implementation class
+
+For example, as demonstrated on the easyb user list in regards to extending the shouldBe syntax, one way of doing this
+is to create a plug-in like so:
+
+Create a plug-in class like this:
+
+[source]
+----
+import io.easyb.bdd.prototype.ExtendedCategories 
+import io.easyb.plugin.BasePlugin
+
+class BetterBePlugin extends BasePlugin { 
+    public String getName() { 
+       return "BetterBe"; 
+    } 
+
+    public Object beforeStory(Binding binding) { 
+       Object.mixin ExtendedCategories 
+    } 
+}
+----
+
+Note the name "BetterBe" is defined in the getName method of the plug-in – next, you'll need to create a file called
+io.easyb.plugin.EasybPlugin – under the covers, easyb uses the sun.misc.Service object, which checks a classpath.
+In that file, put a line like so: io.easyb.plugin.BetterBePlugin.At run-time, easyb sees the using keyword and
+attempts to load the "BetterBe" plug-in – if it finds it, it then calls hook methods that correspond to events
+like beforeStory, beforeThen, afterWhen, etc.
+Finally, to use the new plug-in in a story, simply specify it via the using keyword like so: 
+
+[source]
+----
+using "BetterBe"
+
+scenario "mixins should work normally", { 
+    given "a definition of a new method" , { 
+        var = "blah" 
+    } 
+    then "mixing it into easyb should work", { 
+        var.betterBe "blah"
+    } 
+}
+----
+
+=== ffd
+
+Reprinted from http://agileice.blogspot.com/2009/11/writing-simple-easyb-plugin.html[http://agileice.blogspot.com/2009/11/writing-simple-easyb-plugin.html]. The article has been updated to
+reflect the change in easyb's package name from org.easyb to io.easyb.
+
+== Writing a simple easyb plugin
+
+NOTE: I wrote this article up, published it, then found this PluginAPI wiki article on the easyb site.
+The only difference I saw was the package names of the classes involved. Just in case this article provides a bit of
+clarification, I'll keep it around… .
+
+The easyb BDD framework provides a ton of great functionality out of the box, but as with anything, sometimes there are
+features that you want that the developers can't predict. The easyb developers realized this and created a framework for
+adding plugins to extend easyb and make it do what you need it to.
+
+Plugins for easyb implement the EasybPlugin interface, basically providing behavior before and after easyb "events" (by
+ "events", I mean when easyb runs something like "given" or "scenario"). The EasybPlugin interface looks like this:
+
+[source]
+----
+package io.easyb.plugin
+
+interface EasybPlugin {
+    String getName()
+    def beforeScenario(Binding binding)
+    def afterScenario(Binding binding)
+
+    def beforeGiven(Binding binding)
+    def afterGiven(Binding binding)
+
+    def beforeWhen(Binding binding)
+    def afterWhen(Binding binding)
+
+    def beforeThen(Binding binding)
+    def afterThen(Binding binding)
+
+    def beforeStory(Binding binding)
+    def afterStory(Binding binding)
+
+    void setClassLoader(ClassLoader classLoader)
+}
+----
+
+Most of the time, however, you probably don't need to provide actions for _every_ event, so instead of implementing
+EasybPlugin, you can just extend BasePlugin which provides no-op implementations of the "event" methods, overriding
+whichever methods you need.
+
+Let's get into an example. Let's say we want to extend easyb to mimic injecting resources into a story run with the
+Grails easyb plugin (see my post here for the story behind that). The first thing we want to do is set up our Groovy
+class and implement the one abstract method in BasePlugin, getName():
+
+[source]
+----
+class GrailsInjectPlugin extends BasePlugin {
+    public String getName() { "grails-inject" }
+}
+----
+
+The getName() method serves two purposes: first, in the easyb story, you'll have a "using" line with the value that
+getName() returns, signaling easyb to use the plugin. Second, easyb will use this name to lookup the plugin via its
+PluginLocator class.
+
+At this point, we could compile and include the plugin, and it would be valid, but it wouldn't actually do anything.
+To extend easyb's behavior, we need to override one of the "event" methods. In the case of injecting Grails resources,
+we want to set up our resources before an entire story executes (similar to how they'd be initialized in a Grails test,
+def-ing them at the beginning of a test class). We'll override the beforeStory() method:
+
+[source]
+----
+def beforeStory(Binding binding) {
+    binding.inject = { beanName ->
+        binding."${beanName}" = 
+            ApplicationHolder.application.mainContext.getBean(beanName)
+    }
+}
+----
+
+The "event" methods get passed a Binding implementation which basically is what easyb will use to look up values,
+methods, and the like that it encounters in its stories. In our beforeStory() implementation, we're telling the binding
+that it now has an "inject" method that takes a bean name as an argument. The method looks up that bean in the Grails
+Spring context, then, in the binding, associates the bean with the passed in bean name.
+
+The final code for the plugin class looks like this:
+
+[source]
+----
+package com.agileice.easyb.plugin
+
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import io.easyb.plugin.BasePlugin
+
+class GrailsInjectPlugin extends BasePlugin {
+
+    public String getName() { "grails-inject" }
+
+    def beforeStory(Binding binding) {
+        binding.inject = { beanName ->
+            binding."${beanName}"= 
+                ApplicationHolder.application.mainContext.getBean(beanName)
+        }
+    }
+}
+----
+
+It's all fairly simple and straightforward … the easyb developers did a great job in making plugin development easy.
+
+The next step in getting the plugin into your application is to include it in a JAR file. In addition to our plugin
+classes, we need to include some information in the JAR's META-INF directory. When easyb is looking for plugin
+implementations, it uses the sun.misc.Service class, so we need to include a file named io.easyb.plugin.EasybPlugin in
+the JAR's META-INF/services directory to tell the Service class that we provide an implementation of EasybPlugin. That
+file will contain the name of our implementation class:
+
+[source]
+----
+com.agileice.easyb.plugin.GrailsInjectPlugin # inject Grails beans
+----
+
+At this point, we can compile our plugin, JAR up our classes and the META-INF information, and with the JAR on the
+classpath, run our easyb stories. To use the plugin in a story, we include a "using" line with the name of our plugin
+(the value returned by the getName() method). With the plugin included, we can use the keywords we've defined:
+
+[source]
+----
+using "grails-inject"
+
+inject "grailsApplication"
+inject "someService"
+
+scenario "Grails App injection", {
+
+    given "injected Grails resources"
+    then "the Grails application should not be null", {
+        grailsApplication.shouldNotBe null
+    }
+    and "the service instance should not be null", {
+        someService.shouldNotBe null
+    }
+}
+----
+
+Now, when the story runs, easyb should pick up our plugin, handle our behavior, and execute our scenarios. Note, the
+above examples should work with the version of easyb included with the Grails easyb plugin (marked 0.9.7). If you're
+working with an older version (say, from a Maven repository where the latest version is 0.9.5), you'll probably have to
+implement all of EasybPlugin yourself (since it looks like BasePlugin doesn't exist there), changing the "def" for each
+method to "void". Once you do that, everything else should work the same.

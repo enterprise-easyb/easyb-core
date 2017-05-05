@@ -1,0 +1,426 @@
+= contributing to easyb
+:icons: font
+:toc: preamble
+
+There are numerous ways for you to contribute to easyb. From updating the documentation to adding new plugins and
+working on the core, there are lots of things to do.
+
+
+== Key Groovy Concepts
+
+If you are interested in working on the core of easyb, this section will introduce you to some key Groovy concepts that
+ are used to implement the easyb DSL in Groovy.
+
+
+Much of the easyb DSL syntax is based on two key principles:
+
+- adding methods to the binding
+- using closures to contain the implementation of the behaviors
+
+
+=== Easier DSLs with Groovy's Syntactic Sugar
+
+Consider the `it` method from specifications:
+
+[source,easyb]
+----
+def s = "Hello, World"
+it "should have a length of 12", {
+   s.length().shouldBe 12
+}
+----
+
+If we convert that code snippet back into more formal Groovy, we get:
+
+[source,easyb]
+----
+def s = "Hello, World";
+it("should have a length of 12", {  s.length().shouldBe(12); });
+----
+
+Also consider the `narrative` method:
+
+[source,easyb]
+----
+narrative "description", {
+   as_a "driver"
+   i_want "to sound a horn"
+   so_that "I can alert other drivers to my presence"
+}
+----
+
+[source,groovy]
+----
+narrative("description", {
+   as_a("driver");
+   i_want("to sound a horn");
+   so_that("I can alert other drivers to my presence");
+});
+----
+
+=== Closures
+
+A closure in Groovy is an open, anonymous, block of code that can take arguments, return a value and be assigned to a
+variable. Since closures are first-class Groovy they can be passed as method parameters.
+
+
+http://mrhaki.blogspot.com/2010/08/groovy-goodness-store-closures-in.html
+
+=== Binding
+
+The groovydocs define the binding as an object that:
+
+****
+represents the variable bindings of a script which can be altered from outside the script object or
+created outside of a script and passed into it.
+****
+
+
+=== Categories
+
+Categories are used to add additional functionality to classes at runtime.
+
+The `io.easyb.BehaviorCategory` class is used to add `should` validation methods to the standard Groovy/Java objects.
+
+http://mrhaki.blogspot.com/2009/09/groovy-goodness-use-categories-to-add.html
+
+=== Delegates
+
+Delegates are a key part of defining DSLs in Groovy.
+
+easyb sets a delegate for many of closures, so it's important to know how delegates work in Groovy. The delegate of a
+closure is an object that is used to resolve references that cannot be resolved within the body of the closure itself.
+
+.Example: prints 'hello' as `m` can be resolved within the closure
+[source,groovy]
+----
+def say = {
+  def m = 'hello'
+  println m
+}
+say.delegate = [m:2]
+say()
+----
+
+.Example: prints '2' as `m` can not be resolved within the closure so it's looked up in the delegate instead
+[source,groovy]
+----
+def say = {
+  println m
+}
+say.delegate = [m:2]
+say()
+----
+
+See http://stackoverflow.com/questions/8120949/what-does-delegate-mean-in-groovy and
+http://mrhaki.blogspot.com/2009/11/groovy-goodness-setting-closures.html
+
+=== Example
+
+In the following code snippet from easyb, you can see how the specification `it` keyword is defined using both a delegate
+and a category.
+
+.Definition of the `it` keyword in io.easyb.SpecificationKeywords
+[source]
+----
+  def it(spec, closure, String source, int lineNo) {
+    stepStack.startStep(BehaviorStepType.IT, spec, source, lineNo)
+    closure.delegate = new EnsuringDelegate() // <1>
+    try {
+      if (beforeIt != null) {
+        beforeIt()
+      }
+      listener.gotResult(new Result(Result.SUCCEEDED))
+      use(categories) { // <2>
+        closure()
+      }
+      if (afterIt != null) {
+        afterIt()
+      }
+    } catch (Throwable ex) {
+      listener.gotResult(new Result(ex))
+    } finally {
+      stepStack.stopStep()
+    }
+  }
+----
+<1> Setting the delegates. This adds the `ensure` methods within the closure.
+<2> Using categories (by default just io.easyb.BehaviorCategory). This adds the `should` methods of objects in the
+closure.
+
+== The BehaviorRunner
+
+easyb behaviors are executed by the io.easyb.BehaviorRunner class. The runner class is responsible for reading the
+behaviors and executing them. Before the behavior is executed easyb sets up the runtime environment which conists of
+the following steps:
+
+* Creation of the Behavior Object
++
+`io.easyb.BehaviorRunner` calls `io.easyb.domain.BehaviorFactory` to load the behavior file. The factory returns an
+object implementing `io.easyb.domain.Behavior` (either an `io.easyb.domain.Story` or an `io.easyb.domain.Specification`
+object.)
++
+
+* Definition of Behavior-specific DSL
++
+Once the behavior class is loaded, the BehaviorRunner calls it's execute() method which loads the Behavior's binding
+class (either `io.easyb.SpecificationBinding` or `io.easyb.SpecificationBinding`). If the behavior object is a
+`io.easyb.Story`, the execute method invokes a preprocessor to transform DSL phrases, such as 'as a' and 'shared
+behavior` to Groovy keywords (as_a and shared_behavior).
++
+The binding class defines behavior-specific runtime environment. Each behavior class uses a keywords class
+(`io.easyb.SpecificationKeywords` or `io.easyb.StoryKeywords`) to define the keywords, such as `before`, `narrative`,
+`it`, `given`, `when`, `then`, etc. In addition to defining the keywords, the keyword class defines the execution
+environment for the closures that implement the DSL by assigning delegates to the closure and specifying the
++
+
+* DSL Evaluation
++
+Once the runtime environment has been defined, the behavior class evaluates the behavior file by creating a new
+`groovy.lang.GroovyShell` object with the previously defined binding:
+[source,java]
+----
+        GroovyShell g = new GroovyShell(getClassLoader(), getBinding());
+        g.evaluate(getFile());
+----
++
+
+== Internals
+
+=== BehaviorSteps
+
+=== ExecutionListener
+
+=== ReportWriter
+
+=== ReportingTags
+
+=== ExtensionPoint
+
+The ExtensionPoint class is used to support the definition of custom keywords loaded by SyntaxExtensions.
+
+TIP: Despite the name of this class, it cannot be used to define extensions to the easyb DSL.
+
+== Language Extensions
+
+easyb provides three primary extension mechanisms:
+
+.easyb Extension Mechanisms
+|===
+|Extension Mechanism |Description
+
+|Plugins
+|Adds new capabilities tied to the lifecycle of the behavior.
+
+|ExampleDataParsers
+|Adds new mechanisms for supplying data to the `example` and `where` keywords.
+
+|Syntax Extensions
+|Adds new keywords to the binding and/or adds new categories to the closures used in the behavior steps.
+|===
+
+
+=== ExampleDataParsers
+
+easyb can access new sources of data for the `where` and `example` keywords via ExampleDataParsers. ExampleDataParsers
+can be added to easyb by creating classes that implement the interface `io.easyb.plugin.ExampleDataParser` and declaring
+your data parser using the service provider pattern defined in Sun's jar specification.
+
+=== SyntaxExtensions
+
+
+easyb syntax can be extended by creating classes that implement the interface `io.easyb.plugin.SyntaxExtension` and
+declaring your syntax extension using the service provider pattern defined in Sun's jar specification.
+
+SyntaxExtensions can add new keywords and attach additional Groovy categories to the behavior.
+
+SyntaxExtensions need to be registered as ServiceProvider extensions. That is they need to be defined in
+`META-INF/services/io.easyb.plugin.SyntaxExtension`. A SyntaxExtension can be automatically loaded by the easyb runtime
+or it can require manual loading via the `extension` keyword. The loading mechanism is determined by the return value
+of `SyntaxExtension.autoLoad()`.
+
+The name of the extension is determined by the result of the getName() method. When loading the extension via the
+`extension` keyword, you must pass a name matching the result returned by getName().
+
+==== New Keywords
+
+New keywords are defined in the `Map<String,Closure> getSyntax()` method. The method returns a Map containing a string
+and a closure. The string is the name of the new keyword. The closure is the implementation of the keyword's
+functionality. The parameters for the closure are: ExecutionListener, Binding binding, BehaviorStep, Object[] params.
+The easyb framework will supply the first three parameters at runtime. You only need to pass the parameter array to the
+extension when it is invoked.
+
+Because the getSyntax() method returns a Map, you can define multiple new keywords in one extension.
+
+==== Additional Categories
+
+A SyntaxExtension can define additional categories that are added to the closure for all behavior steps.
+
+==== Example Behavior
+
+.Behavior Using an Extension
+[source,easyb]
+----
+extension "jiraReportingPlugin"     // <1>
+
+scenario "paying a customer in arrears takes them out of arrears", {
+  jira(['id':"CSS-1574", 'description':"This should be in the report"])   // <2>
+  given "A Customer", {
+    customerId = 5
+    jira([id:"some text", description:"some other text"])
+  }
+  when "We pay an amount", {
+    // this should come from an autoloaded syntax extension
+    exec {"1"+"1"}   // <3>
+  }
+  then "They aren't in arrears any longer"
+}
+----
+<1> Loads an extension named "jiraReportingPlugin"
+<2> The `jira` keyword was added by the jiraReportingPlugin extension.
+<3> The `exec` keyword was added by an autoloading extension.
+
+==== Example SyntaxExtensions
+
+.Example: Manually loaded extension that adds a keyword to the binding
+[source,groovy]
+----
+package io.easyb.plugin
+
+import io.easyb.BehaviorStep
+import io.easyb.result.ReportingTag
+import groovy.xml.MarkupBuilder
+import io.easyb.listener.ExecutionListener;
+
+/*
+Jira is of course a trademark of Atlassian
+ */
+
+public class JiraSyntaxExtension implements SyntaxExtension {
+  def boolean autoLoad() {
+    return false;           // <1>
+  }
+
+  def Class[] getExtensionCategories() {
+    return new Class[0];     // <2>
+  }
+
+  String getName() {
+    return "jiraReportingPlugin"      // <3>
+  }
+
+  class JiraReportingTag implements ReportingTag {
+    def map
+
+    public JiraReportingTag(map) {
+      this.map = map
+    }
+
+    public void toXml(MarkupBuilder xml) {
+      xml.jira(map)
+    }
+  }
+
+  Map<String, Closure> getSyntax() {  // <4>
+    return ['jira': { ExecutionListener listener, Binding binding, BehaviorStep stepParent, Object []params ->
+      if ( params.length == 1 ) {
+        listener.tag new JiraReportingTag(params[0])
+      } else
+        throw new RuntimeException("Incorrect number of parameters passed to jira syntax")
+    }]
+  }
+}
+----
+<1> This extension will not be automatically loaded.
+<2> This extension does not add any additional categories.
+<3> This extension is named "jiraReportingPlugin". Note that this is different than the name of the class
+(JiraSyntaxExtension).
+<4> This extension adds one new keyword (`jira`) to the binding. When the `jira` keyword is called, its closure will
+be invoked. In this example, the `jira` keyword creates a new JiraReportingTag and adds it to the ExecutionListener.
+
+.Example: Automatically loaded extension that adds a keyword to the binding and a category to the closure
+[source,groovy]
+----
+package io.easyb.plugin
+
+import io.easyb.BehaviorStep
+import io.easyb.listener.ExecutionListener
+import io.easyb.result.ReportingTag
+import groovy.xml.MarkupBuilder;
+
+public class ClosureSyntaxExtension implements SyntaxExtension {
+
+  def boolean autoLoad() { // <1>
+    return true
+  }
+
+  def String getName() {
+    return "closure"  // <2>
+  }
+
+  class ClosureReporting implements ReportingTag {
+    def result
+
+    ClosureReporting(result) {
+      this.result = result
+    }
+
+    void toXml(MarkupBuilder xml) {
+      xml.exec(result:result.toString())
+    }
+  }
+
+  def Map<String, Closure> getSyntax() {  // <3>
+    return ['exec': { ExecutionListener listener, Binding binding, BehaviorStep stepParent, Object[] params ->
+      if (params.length != 1 || !(params[0] instanceof Closure))
+        throw new RuntimeException("exec failure, must be executable closure")
+
+      def r = (params[0])()
+
+      listener.tag new ClosureReporting(r)
+    }]
+  }
+
+  // sample from Groovy book
+  static class StringCalculationCategory {
+    static def plus(String self, String operand) {
+      try {
+        return self.toInteger() + operand.toInteger()
+      } catch (NumberFormatException fallback) {
+        return (self << operand).toString()
+      }
+    }
+  }
+
+  def Class[] getExtensionCategories() {  // <4>
+    return [StringCalculationCategory.class]
+  }
+}
+----
+<1> This extension will load automatically.
+<2> This extension is named "closure". Notice that it the previous behavior, the "closure" extension was not loaded via
+the `extension` keyword.
+<3> This extension defines the `exec` keyword. Notice that the previous behavior uses the `exec` keyword. It gets added
+to the binding because of this autoloading SyntaxExtension.
+<4> This extension adds a category to the closure that defines the `plus` method. Note that this method is not used in
+ the previous behavior.
+
+
+
+
+==== Complete Samples
+
+easyb's test classes contain two examples. See `src/test/groovy/io/easyb/plugin/ClosureSyntaxExtension.groovy` and
+`src/test/groovy/io/easyb/plugin/JiraSyntaxExtension.groovy` for the class definition of two SyntaxExtensions. These
+SyntaxExtensions are used in the behavior `src/test/groovy/io/easyb/reporting_tags/InsertReportingTagsInto.story`.
+
+
+=== Plugins
+
+Writing plug-ins for easyb is simple and primarily involves implementing the EasybPlugin object (or extending an adapter
+object called BasePlugin) and declaring your plug-in using the service provider pattern defined in Sun's jar
+specification.
+
+Unlike SyntaxExtensions that add new keywords to a behavior and new categories to the closures or ExampleDataParsers
+that define new mechanisms for accessing data for the `where` and `example` keywords, plugins are tied to the lifecycle
+of the behavior.

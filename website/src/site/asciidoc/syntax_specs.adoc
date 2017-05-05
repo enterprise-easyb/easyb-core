@@ -1,0 +1,62 @@
+= specification syntax
+:icons: font
+:toc: preamble
+:toc-title: Table of Contents
+:toclevels: 2
+
+Specifications are used to document and validate low-level behaviors. In addition to the common syntax, specifications
+support the following additional keywords.
+
+== syntax overview
+
+.A sample easyb specification showing most syntax features
+[source,groovy]
+----
+description """
+This API provides access to the reference data contained within the system
+"""
+
+it "should do a", {
+}
+
+it "should do b", {
+}
+----
+
+== Keywords
+
+=== it
+
+The main syntax element of an easyb specification is the `it` keyword. Each `it` keyword defines a behavior within the
+specification. The format is:
+
+[source]
+----
+it "description", { // <1>
+   implementation // <2>
+   verification // <3>
+}
+----
+<1> The `description` is a behavior statement.
+<2> The implementation is any Groovy code needed to perform the behavior
+<3> The verification is some form or combination of should statements and ensure closures.
+
+By convention, the `description` is usually stated as a `should` condition:
+
+ it "should not throw an exception"
+ it "should return the number of elements in the map"
+
+However, you can write it as anything you choose--the goal is to make the specification a readable and meaningful
+document outlining the behavior of the object being specified.
+
+The `description` is part of the specification's documentation. It holds no meaning with relation to the validation of
+the specification.
+
+=== before
+
+=== after
+
+=== shared_specs
+
+=== and
+

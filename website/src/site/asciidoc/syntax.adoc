@@ -1,0 +1,514 @@
+= Syntax
+:icons: font
+:toc: preamble
+:toc-title: Table of Contents
+:toclevels: 2
+
+easyb supports two distinct kinds of behaviors:
+
+- specifications -- validate the unit- or component-level behavior.
+- stories -- validate system-wide behavior
+
+Although the use cases of the two behaviors are different both types support many of the same easyb syntax constructs.
+
+==  Common Syntax
+
+NOTE: All easyb behaviors are written in standard Groovy. This means all Groovy language constructs and objects can be used
+within your behaviors. Furthermore, Groovy's syntax is very close to that of Java: you can almost copy and paste 95% of
+Java code into your Groovy classes, and it will also be valid Groovy! But Groovy also adds some "syntactic sugar" to
+Java, like list, map and regular expression literals, some new operators, and some handy shortcut notations to make the
+code more concise. If your background is Java, you can treat Groovy as just plain Java in the beginning. Over time, as
+you learn more Groovy you'll be able to use the features provided by Groovy. You can proceed at your own pace.
+
+See http://www.oracle.com/technetwork/articles/java/groovy-1695411.html for an overview.
+
+=== Imports and Packages
+
+Since Groovy follows Java syntax, you must use the import statement to access classes in other packages. You can use
+the package statement to organize your behaviors.
+
+=== Executable Specifications
+
+easyb is built on the principal of executable behaviors It supports this by capturing additional information
+regarding behaviors, such as a description and narrative.
+
+Both the narrative and description keywords are optional and they don't have to be used together-- i.e. you can use the
+narrative one without providing a description. These aspects will be captured in the output (i.e. story report) of an
+easyb run too.
+
+
+==== description
+
+easyb supports a
+description syntax that takes a String value -- single quote or Groovy's triple quote trick.
+
+[source,easyb]
+----
+description "some description"
+----
+or
+[source,easyb]
+----
+description """some long description that requires
+multiple lines, etc
+"""
+----
+
+The description is optional and has no impact on the running or validating of the behavior. Its sole use is
+documentation. The description is output in the reports.
+
+
+==== narrative
+
+easyb supports the notion of narratives, which attempt to set the stage of a story. Narratives use a narrative clause
+followed by a series of descriptors (like as a, i want, and so that) that can either be written with underscores or not.
+
+The narrative defines the features, benefits, and roles of a persona related to a story. The narrative syntax
+consists of three phrases: 'As a', 'I want', 'So that'.
+
+A narrative has the following format:
+
+.Narrative Syntax
+[source,easyb]
+----
+narrative "description", {
+	as a "role"
+	i want "feature"
+	so that "benefit"
+}
+----
+
+easyb supports the following syntax formats:
+
+.table
+|===
+|Syntax |Role |Feature |Benefit |Status
+
+|Keyword
+|as_a/as_an
+|i_want
+|so_that
+|Deprecated
+
+|Conversational
+|as a/as an
+|i want
+|so that
+|Active
+
+|Formal
+|As a/As an
+|I want
+|So that
+|Active
+
+|Camc=elCase
+|asA/asAn
+|iWant
+|soThat
+|Obsolete
+
+|===
+
+.Example Narrative
+[source,easyb]
+----
+    narrative 'segment flown', {
+        as_a 'frequent flyer'
+        i_want 'to accrue rewards points for every segment I fly'
+        so_that 'I can receive free flights for my dedication to the airline'
+    }
+----
+
+
+Narratives do not affect the behavior of a story, per say -- in fact, their use is purely for documentation purposes
+and they will be shown in any easyb report that is generated at the conclusion of a run.
+
+
+The narrative is optional and has no impact on the running or validating of the behavior. Its sole use is
+documentation. The narrative is output in the reports.
+
+=== Validating the Behavior
+
+easyb has two ways to validate behaviors: should and ensure.
+
+and
+
+but an alternative for and
+
+==== should
+
+easyb auto-magically wires all objects within the confines of a story or specification to respond to a
+series of `should` calls that are used to validate the behavior. That means you can easily verify the state of things by
+writing phrases like:
+
+.Simple `should` validation
+[source,easyb]
+----
+var.shouldNotBe "123456"
+and
+var.length().shouldEqual 6
+----
+
+The various `should` methods take the value to compare against and an optional string message to be reported when the
+validity check fails.
+
+.Advanced `should` validation with custom reporting
+[source,easyb]
+----
+var.shouldNotBe "123456" "expected anything but 123456"
+and
+var.length().shouldEqual 6 "expected length of 6"
+----
+
+
+
+===== Simple Validation
+Currently, easyb supports the following `should` phrases, where the phrase is attached to any object and the phrase
+takes a value to be verified against.
+
+- shouldBe
+- shouldEqual
+- shouldBeEqual
+- shouldBeEqualTo
+
+easyb supports the negative of the above phrases as follows (same rules apply as above):
+
+- shouldNotBe
+- shouldNotEqual
+- shouldntBe
+- shouldntEqual
+
+===== Type Validation
+
+What's more, easyb allows you to verify object types, such as `value.shouldBeAn Integer`.
+Both positive and negative phrases are supported:
+
+- shouldBeA <type>
+- shouldBeAn <type>
+- shouldNotBeA <type>
+- shouldNotBeAn <type>
+
+===== Comparisons
+
+You can compare values with the `should syntax` as well:
+
+- shouldBeGreaterThan
+- shouldBeLessThan
+- shouldStartWith
+- shouldEndWith
+
+===== Verifying Objects in Collections or Properties of Objects
+
+easyb supports verifying objects in a collection or properties of objects via the `shouldHave` method.
+
+- shouldHave
+- shouldNotHave
+
+easyb supports a shouldHave call on instances of collections; therefore, I can easily write the following checks:
+
+[source,easyb]
+----
+    def namemap = ["WKL_ID":"id", "NBS": "cst", "EFF_DT":"effectiveDate"]
+    namemap.shouldHave "NBS"
+    namemap.shouldHave "WKL_ID":"id"
+    namemap.shouldHave "effectiveDate"
+    namemap.shouldNotHave "missing"
+----
+
+As you can see, with the `shouldHave` call, you can verify keys and values; what’s more, you can even validate the
+presence of a name-value pair.
+
+
+
+To see all of the above verifications in action, look at some of the stories and behaviors in easyb's source.
+
+==== ensure DSL: ensure, ensureThrows, ensureStrictThrows, ensureFails, fail
+
+easyb has an expressive ensure syntax that is similar in nature to Java's assert but a bit more readable.
+
+The `ensure` keywords and the `fail` keywords are available within specifications (within the `it` block) and
+stories (within the `when` and `then` blocks).
+
+===== ensure
+
+Whenever you want to verify the state of a particular object, use easyb's ensure blocks, which supports
+the following syntax:
+
+[source,easyb]
+----
+ensure(object or expression){
+  expression
+}
+----
+
+That is, the ensure closure takes a value, which could be a normal object or an expression itself.
+For instance, you could ensure that some value was false by writing:
+
+[source,easyb]
+----
+ensure(!value)
+----
+
+You could alternatively write:
+
+[source,easyb]
+----
+ensure(value){
+  isFalse
+}
+----
+
+As you can see, inside the ensure clause you can do some cool things, such as:
+
+
+- isNull
+- isNotNull
+- isA<class type>
+- isEqual
+- isEqualTo(value, message)
+- isEqualTo<value>
+- isNotEqualTo<value>
+- isTrue
+- isFalse
+- contains
+- has
+
+You can chain clauses too:
+
+[source,easyb]
+----
+ensure(value){
+ isNotNull
+ and
+ isAString
+}
+----
+
+The ensure DSL is quite forgiving-- for instance, check out these code examples:
+
+[source,groovy]
+----
+mVal = "Test"
+ensure(mVal){
+ isEqualToTest
+ and
+ isEqualTo "Test"
+}
+
+mVal = 23
+ensure(mVal){
+ isEqualTo23
+ and
+ isEqualTo 23
+}
+----
+You can work with collections and even ensure fields on objects too:
+
+[source,groovy]
+----
+ensure("test"){
+ contains("est")
+}
+
+ensure([1,2,3]){
+ contains(3)
+ and
+ contains([2,3])
+}
+
+def person = new Person("Andy", 11)
+ensure(person){
+ contains(firstName:"Andy")
+ and
+ contains(age:11)
+}
+----
+
+Flexibility is key, hence you can use has instead of contains if you wish:
+
+[source,groovy]
+----
+def person = new Person("Jill", 11)
+ ensure(person){
+  has([firstName:"Jill", age:11])
+}
+----
+
+===== ensureThrows
+
+You can also check that an exception or a list of exceptions are thrown using the ensureThrows variant
+of the ensure closure:
+
+[source,groovy]
+----
+ensureThrows(RuntimeException) {
+	throw new RuntimeException("Test")
+}
+
+ensureThrows([IllegalArgumentException, NullPointerException]) {
+  throw new NullPointerException("null")
+}
+----
+
+The `ensureThrows` method checks to see if the thrown exception is the same as, extends, or implements the specified
+ exceptions.
+
+===== ensureStrictThrows
+
+You can also check that an exception or a list of exceptions are thrown using the `ensureStrictThrows` variant
+of the ensure closure:
+
+[source,groovy]
+----
+ensureStrictThrows(RuntimeException) {
+	throw new RuntimeException("Test")
+}
+
+ensureStrictThrows([IllegalArgumentException, NullPointerException]) {
+  throw new NullPointerException("null")
+}
+----
+
+Unlike the ensureThrows method, the ensureStrictThrows method ensures that only the specified exceptions are thrown.
+
+===== ensureUntil
+
+easyb supports timeout-based retries when validating a behavior.
+
+For example, the behavior below from easyb’s source leverages this new feature and demonstrates that the ensureUntil
+call will run the code inside the passed in closure for 4 seconds (you can see that the executed closure’s
+(delayedClosure defined early) value changes after 2):
+
+[source,easyb]
+----
+scenario "Another passing verification", {
+  then "Condition passes", {
+    var = 20
+    delayedClosure = {i ->
+      Thread.sleep(2000)
+      return (i += i)
+    }
+
+    var = delayedClosure(20)
+    ensureUntil(4) {
+      var.shouldBe 40
+    }
+  }
+}
+----
+
+===== ensureFails
+You can also ensure that something is failing using the ensureFails closure:
+
+[source,groovy]
+----
+ensureFails {
+  1.shouldBe 2
+}
+
+ensure(info.getName()) {
+   isNotNull
+   and
+   isAString
+}
+
+ensureThrows(Exception.class) {
+   invokeMethod()
+}
+----
+
+=== Forcing a failure
+
+Occasionally during the course of writing an easyb behavior, you might run into a condition that requires
+a forced failure. That is, based upon some behavior of the code under verification, you might explicitly want easyb to
+fail a particular scenario. For example, below is a then phrase within a scenario that contains a conditional — if
+something is true then verify some result; however, if something is false, then force a failure:
+
+[source,easyb]
+----
+then "the cell returned should be a date type", {
+   sndcells = sheet.getRow(1)
+   dtype = sndcells[2].getType()
+   if(dtype == CellType.DATE){
+      dt = sndcells[2].getDate()
+      dt.getTime().shouldBe 1201737600000
+   } else {
+     fail "the type obtained wasn't a date, but was a ${dtype}"
+   }
+}
+----
+
+The code above (which is a snippet of a larger story on parsing an Excel template) verifies that a Date type is
+obtained from a particular cell represented as a string (i.e. 1/31/2009). If the dtype variable is of a desired type
+(i.e. Date), one can easily validate it via the shouldBe phrase. If for some reason, however, the cell isn’t a date,
+you can force easyb to fail by using the fail phrase, which takes a String.
+
+=== Shared Behaviors
+
+WARNING: The `shared_behaviors` keyword might only apply to stories. There appears to be a `shared_specs` keyword for
+use with specifications.
+
+easyb supports the notion of shared behaviors is supported; that is, you can create a base behavior (at this point it
+must live within the context of a single story (i.e. a file)) and then refer to that behavior inline using the keywords
+shared_behavior and it_behaves_as like so:
+
+[source,easyb]
+----
+
+shared_behavior "shared behaviors", {
+    given "a string", {
+        var = ""
+    }
+
+    when "the string is hello world", {
+        var = "hello world"
+    }
+}
+
+scenario "first scenario", {
+    it_behaves_as "shared behaviors"
+
+    then "the string should start with hello", {
+        var.shouldStartWith "hello"
+    }
+}
+
+scenario "second scenario", {
+    it_behaves_as "shared behaviors"
+
+    then "the string should end with world", {
+        var.shouldEndWith "world"
+    }
+}
+----
+
+easyb supports the following syntax formats:
+
+.Syntax Alternatives
+|===
+|Syntax | Usage
+
+|Keyword
+|shared_behavior
+
+|Conversational
+|shared behavior
+|===
+
+== Behavior Status
+
+failed
+
+pending
+
+in review  -- behaviors can be executed without actually running them; thus, a report is generated with an 'in review'
+status
+
+== using
+
+The `using` keyword is used to add additional capabilities to the easyb runtime environment.
+
+== extension
+
+The `extension` keyword is used to add syntax extensions to the easyb runtime environment.

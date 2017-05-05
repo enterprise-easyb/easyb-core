@@ -1,0 +1,9 @@
+= bdd the easyb way
+:icons: font
+
+easyb supports a few different mechanisms for defining behaviors. You can (depending on what's more comfortable for you):
+
+    define RSpec style specifications using before and it
+    define stories via given, when, and then
+
+Each style has a few associated semantical rules that turn out to be quite logical.

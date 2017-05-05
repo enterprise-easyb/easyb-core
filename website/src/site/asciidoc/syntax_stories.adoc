@@ -1,0 +1,205 @@
+= story syntax
+:icons: font
+:toc: preamble
+:toc-title: Table of Contents
+:toclevels: 2
+
+Stories are used to document and validate high-level behaviors. In addition to the common syntax, stories
+support the following additional keywords.
+
+== syntax overview
+.A sample easyb story showing most syntax features
+[source,easyb]
+----
+description """
+This API provides access to the reference data contained within the system
+"""
+
+narrative "narrative title", {
+   As a "unauthenticated user"
+   I want "to create an account"
+   So that "I canbe a registered user"
+}
+
+scenario "scenario 1", {
+   given "given 1"
+   and "given 2"
+   when "I take some action"
+   and "some other condition is in place"
+   then "there should be result 1"
+   and "there should be result 2"
+   where "sample data"
+}
+
+----
+
+== shared behaviors
+
+easyb
+
+=== shared_behavior
+
+The `shared_behavior` (also `shared behavior`) keyword is used to define a partial behavior, usually a `given` or a
+`given-when` pair that can be used in your scenarios.
+
+[source,easyb]
+----
+shared behavior "id", {
+   given "id", {
+      // implementation
+   }
+
+   when "id", {
+      // implementation
+   }
+}
+----
+
+
+=== it_behaves_as
+
+The `it_behaves_as` (also `it behaves as`) keyword is used to execute a previously-defined shared behavior.
+
+[source,easyb]
+----
+scenario "first scenario", {
+   it behaves as "shared scenario"
+   then "id", {
+      // validation
+   }
+}
+scenario "first scenario", {
+   it behaves as "shared scenario"
+   then "id", {
+      // validation
+   }
+}
+----
+
+.Example: SharedBehaviorWithoutUnderscores.story
+****
+[source,easyb]
+----
+package org.easyb.bdd.nounderscores
+shared behavior "shared behaviors", {
+  given "a string", {
+    var = ""
+  }
+
+  when "the string is hello world", {
+    var = "hello world"
+  }
+}
+
+scenario "first scenario", {
+  it behaves as "shared behaviors"
+
+  then "the string should start with hello", {
+    var.shouldStartWith "hello"
+  }
+}
+
+scenario "second scenario", {
+  it behaves as "shared behaviors"
+
+  then "the string should end with world", {
+    var.shouldEndWith "world"
+  }
+}
+----
+****
+
+== Support for ignoring scenarios
+The `ignore` keyword can be used in stories to specify one or more scenarios that should be ignored. It can take as an
+argument a scenario name, a list of scenario names, a regular expression, a closure, or the value `all`.
+
+* Scenario Name
++
+.io/easyb/bdd/issues/Issue87Selective.story
+[source,easyb]
+----
+ignore "this is purposely a broken scenario"
+
+scenario "this is purposely a broken scenario", {
+    given "some variable with a value", {
+        val = 12
+    }
+    then "to force an error, one should verify it is not 12", {
+        val.shouldNotEqual 12
+    }
+}
+----
+* List of Scenario Names
+* Regular Expression
++
+.io/easyb/bdd/prototype/IgnoredViaRegEx.story
+[source,easyb]
+----
+ignore ~/abc/
+
+scenario "abc", {
+    given "bah", {
+        bar = 10
+    }
+    then "it's a lamb", {
+        bar.shouldBe 90
+    }
+}
+----
++
+* Closure
++
+.io/easyb/bdd/issues/Issue177.story
+[source,easyb]
+----
+ignore {
+  scenario "this is purposely a broken scenario", {
+      given "some variable with a value", {
+          val = 12
+      }
+      then "to force an error, one should verify it is not 12", {
+          val.shouldNotEqual 12
+      }
+  }
+
+  scenario "another purposely a broken scenario", {
+      given "some variable with a value", {
+          val = 13
+      }
+      then "to force an error, one should verify it is not 12", {
+          val.shouldNotEqual 13
+      }
+  }
+}
+----
++
+* all
++
+.io/easyb/bdd/issues/Issue87.story
+[source,easyb]
+----
+ignore all
+
+scenario "this is purposely a broken scenario", {
+    given "some variable with a value", {
+        val = 12
+    }
+    then "to force an error, one should verify it is not 12", {
+        val.shouldNotEqual 12
+    }
+}
+----
+
+
+
+== Fixtures
+
+Richard Vowles
+
+10/22/13
+
+Re: [easyb-users] Re: Ordering of stories or has given
+
+From memory, there is a before, and a before_each in a story.
+
+Also from memory - this is two years ago - specifications are not supported.

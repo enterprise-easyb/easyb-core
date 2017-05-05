@@ -1,0 +1,129 @@
+= Ant
+:icons: font
+
+You can run your behaviors and stories via easyb's Ant task. It's easy:
+
+[source]
+----
+load the task (via Ant's taskdef)-- the class name is io.easyb.ant.BehaviorRunnerTask
+provide a location for a report (or series of reports) and then provide a fileset with the location(s) of your behaviors and stories
+----
+
+Defining the task looks like this:
+
+[source]
+----
+  <taskdef name="easyb" classname="io.easyb.ant.BehaviorRunnerTask">
+    <classpath>
+      <pathelement location="${lib.dir}/release/easyb-xx.jar"/>
+    </classpath>
+  </taskdef>
+----
+
+Running the task looks like:
+
+[source]
+----
+<easyb>
+  <classpath>
+     <path refid="build.classpath" />
+     <pathelement path="target/classes" />
+  </classpath>
+ <report location="target/story.txt" format="txtstory" />
+ <behaviors dir="${mybehaviors.dir}">
+   <include name="**/*Story.groovy"/>
+ </behaviors>
+</easyb>
+----
+
+The easyb task takes a number of options including:
+
+[source]
+----
+failureFile -- path to file which will contain any failed behaviors
+noExecute -- boolean, which allows you to generate a report without executing any stories
+tags -- a single or comma-delimited list of tags to execute
+----
+
+Please note, report's have numerous formats, including html, xml, txtstory, and txtspecification.
+
+Produces output:
+
+[source]
+----
+    [easyb] Running story listener story (StoryListener.story)
+    [easyb] Scenarios run: 2, Failures: 0, Pending: 0, Time Elapsed: 0.06 sec
+    [easyb] 2 total behaviors run with no failures
+    [easyb] easyb execution passed
+
+  BUILD SUCCESSFUL
+  Total time: 3 seconds
+----
+
+== Failures
+
+The point of having your behaviors run as part of your build is to notify you when they catch possible code problems. easyb also allows a user specified property to be set to true if the build fails.
+
+This property is called failureProperty and using it would look like this
+
+[source]
+----
+  <easyb failureProperty="easyb.failed">
+----
+
+That alone doesn't fail the build but puts the flexibility in your hands to fail it, print it or do nothing with it as you please. Here is a common example of using that property to fail a build:
+
+[source]
+----
+  <fail if="easyb.failed" message="Execution halted as behaviors failed"/>
+----
+
+Now when a behavior fails our build will halt with output like so:
+
+[source]
+----
+[easyb] easyb is preparing to process 1 file(s)
+[easyb] 9 behavior steps run , but status is failure! Total failures: 1
+[easyb]   Failure -> then the dealer should win in BlackjackStory.groovy
+[easyb]   VerificationException: expected lossss but was loss:
+....
+....
+[easyb] specification failures detected!
+[easyb] easyb execution FAILED
+
+BUILD FAILED
+/blah/blah/build.xml:75: easyb reported a failure
+
+Total time: 3 seconds
+----
+
+Now you can be more confident that your build hasn't been broken by a change since you get instant feedback on behavior failures.
+
+== Story Printing
+
+easyb embraces the idea that stories are a link between the business requirements and your code. To help use those stories when talking to your clients about requirements, easyb provides a way to print out just the stories without a lot of geeky code.
+
+To print out a story report via Ant, simply create a report element with its format attribute set to txtstory as follows:
+
+[source]
+----
+<report location="target/stories.txt" format="txtstory"/>
+----
+
+Here is some sample output:
+
+[source]
+----
+9 behavior steps executed successfully  
+ Story: blackjack
+  scenario tie game when cards are dealt but dealer gets higher card
+    given a game a blackjack game and both players have a score of 10
+    when the dealer gets an Ace and you get a 10
+    then the dealer should win
+  scenario tie game when cards are dealt but player gets higher card
+    given a game a blackjack game and both players have a score of 10
+    when the dealer gets a 10 and you get an Ace
+    then the player should win
+----
+
+That looks like something business users (or management) could understand– they might even be able to _gasp_ write them!
